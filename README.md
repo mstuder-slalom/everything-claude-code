@@ -48,6 +48,8 @@ This matters because:
 3. **Tests verify behavior** - Not implementation details that break on refactoring
 4. **Language-appropriate patterns** - Go gets table-driven tests, Python gets pytest, etc.
 
+**New to trophy testing?** Read [docs/WHY_TROPHY_TESTING.md](docs/WHY_TROPHY_TESTING.md) for a comprehensive guide on the philosophy, workflow, and why it matters.
+
 ---
 
 ## What is Trophy Testing?
