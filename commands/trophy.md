@@ -52,8 +52,10 @@ The trophy-guide agent will:
 **Key Principles:**
 - Implementation FIRST, tests verify it
 - Integration tests are PRIMARY
-- Minimal mocking - test real behavior
+- **NO INTERNAL MOCKING** - Never mock your own code
 - Quality over coverage numbers
+
+> **CRITICAL:** Tests that mock internal project code (your database, services, HTTP handlers) are NOT trophy tests. Only mock external third-party APIs. See `agents/trophy-guide.md` for the full rule.
 
 ## Example Usage
 
