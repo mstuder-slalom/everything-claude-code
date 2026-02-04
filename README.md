@@ -175,6 +175,67 @@ Once installed, use these commands in any project:
 
 ---
 
+## Why Trophy Testing is Valuable
+
+### The Problem It Solves
+
+Traditional TDD with heavy mocking creates tests that pass but prove nothing:
+
+```python
+# This test passes but the real code might be completely broken
+def test_user_service():
+    mock_db = Mock()
+    mock_db.get_user.return_value = {"id": 1, "name": "Test"}
+
+    service = UserService(mock_db)
+    result = service.get_user(1)
+
+    assert result["name"] == "Test"  # ✅ Passes! But does real DB work? Unknown.
+```
+
+**The mock test verifies:** "If the database returned this data, would my code handle it?"
+
+**What you need to know:** "Does my code actually work with the real database?"
+
+### How Trophy Testing Fixes This
+
+Trophy testing enforces **real code execution**:
+
+```python
+# This test proves the real code works
+def test_user_service(test_db):  # Real test database
+    create_user(test_db, id=1, name="Test")
+
+    service = UserService(test_db)  # Real service, real DB
+    result = service.get_user(1)
+
+    assert result["name"] == "Test"  # ✅ Passes = Real code works
+```
+
+### The Critical Rule: No Internal Mocking
+
+**Tests that mock internal project code are NOT trophy tests.**
+
+| Never Mock | Use Instead |
+|------------|-------------|
+| Your database | Test database, SQLite in-memory |
+| Your HTTP handlers | Test client |
+| Your services | Call them directly |
+| Your internal modules | Test them together |
+
+| Only Mock | Why |
+|-----------|-----|
+| Stripe, OpenAI, Twilio | External, costs money, not in your control |
+
+### What You Get
+
+1. **Tests that catch real bugs** - If it passes, the code works
+2. **Confidence to deploy** - Tests prove the build is correct
+3. **Spec traceability** - Every test traces to a WHEN/THEN scenario
+4. **Language-appropriate patterns** - Go gets table-driven, Python gets pytest, etc.
+
+---
+
 ## Trophy Workflow Overview
 
 The complete workflow transforms specifications into verified, tested code:
@@ -183,23 +244,45 @@ The complete workflow transforms specifications into verified, tested code:
 ┌─────────────────────────────────────────────────────────────┐
 │  Step 1: Map Codebase                                       │
 │  /cartographer → docs/CODEBASE_MAP.md                       │
+│  Understand the project structure before making changes     │
 ├─────────────────────────────────────────────────────────────┤
 │  Step 2: Analyze Dependencies                               │
 │  /deps src/ → Dependency graph via tree-sitter              │
+│  Know what imports what, validates code map accuracy        │
 ├─────────────────────────────────────────────────────────────┤
 │  Step 3: Create OpenSpec Artifacts                          │
 │  proposal.md → design.md → tasks.md → specs/*.md            │
+│  Define WHAT to build with WHEN/THEN scenarios              │
 ├─────────────────────────────────────────────────────────────┤
 │  Step 4: Implement from Spec                                │
 │  Write code based on design.md and tasks.md                 │
+│  Implementation driven by spec, not by tests                │
 ├─────────────────────────────────────────────────────────────┤
 │  Step 5: Generate & Run Trophy Tests                        │
 │  /trophy → Tests from WHEN/THEN scenarios                   │
+│  Each scenario becomes an integration test                  │
 ├─────────────────────────────────────────────────────────────┤
 │  Step 6: Code Review                                        │
 │  Language-specific reviewer (go-reviewer, python-reviewer)  │
+│  Catches idiom violations and security issues               │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+### How the Pieces Fit Together
+
+```
+Specification (WHEN/THEN)
+        ↓
+   Implementation
+        ↓
+   Trophy Tests ←── Generated from spec scenarios
+        ↓
+   Test Report
+        ↓
+   "12/15 scenarios verified"
+```
+
+The tests don't drive the design—they verify the implementation matches the spec.
 
 ---
 
