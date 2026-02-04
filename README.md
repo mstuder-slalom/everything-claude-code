@@ -14,6 +14,42 @@ This repo provides agents, skills, commands, rules, and MCP configurations for b
 
 ---
 
+## What's New: Trophy Testing (Our Contribution)
+
+This fork replaces the original TDD-based workflow with **Trophy Testing** - a fundamentally different approach to testing that we developed. Here's what we added:
+
+### New Components
+
+| Component | What It Does | Why It Matters |
+|-----------|--------------|----------------|
+| **trophy-guide agent** | Orchestrates spec-driven testing | Verifies code against OpenSpec WHEN/THEN scenarios |
+| **mcp-tree-sitter** | Analyzes code dependencies | Enables accurate code mapping and import/export tracking |
+| **`/trophy` command** | Generates integration tests from specs | Tests real behavior, not mocked implementations |
+| **`/deps` command** | Parses dependencies via tree-sitter | Validates code maps and module relationships |
+| **`/trophy-workflow`** | End-to-end guided workflow | Full process from spec to verified code |
+| **Language-specific testing** | Go, Python, Java, TypeScript patterns | Idiomatic tests (table-driven for Go, pytest for Python, etc.) |
+
+### What We Removed
+
+- `tdd-guide` agent → replaced with `trophy-guide`
+- `/tdd` command → replaced with `/trophy`
+- `tdd-workflow` skill → replaced with `trophy-workflow`
+- TDD-focused rules → updated for spec-driven methodology
+
+### The Key Insight
+
+**TDD says:** Write tests first, then code to make them pass.
+
+**Trophy Testing says:** Write specifications first, implement from spec, then generate tests that verify the spec scenarios.
+
+This matters because:
+1. **Specs are requirements** - WHEN/THEN scenarios capture what the system should do
+2. **Integration tests dominate** - 70% of tests hit real databases/APIs, not mocks
+3. **Tests verify behavior** - Not implementation details that break on refactoring
+4. **Language-appropriate patterns** - Go gets table-driven tests, Python gets pytest, etc.
+
+---
+
 ## What is Trophy Testing?
 
 Trophy Testing is a **spec-driven testing methodology** that inverts traditional TDD:
