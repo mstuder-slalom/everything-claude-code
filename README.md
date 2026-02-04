@@ -87,36 +87,50 @@ Traditional TDD:        Trophy Testing:
 
 ---
 
-## Quick Start
+## Installation (Local Only)
 
-### 1. Clone the Repository
+This repo is not published as a public plugin. Install locally by copying components to your Claude configuration directory.
+
+### Step 1: Clone Both Repositories
 
 ```bash
+# Clone this repo
 git clone https://github.com/mstuder-slalom/everything-claude-code.git
-cd everything-claude-code
-```
 
-### 2. Install Rules (Required)
-
-```bash
-# Copy rules to your Claude config (applies to all projects)
-cp -r rules/* ~/.claude/rules/
-```
-
-### 3. Install the Tree-Sitter MCP Server
-
-The MCP server enables code dependency analysis:
-
-```bash
-# Install from PyPI
-pip install mcp-tree-sitter
-
-# Or from source
+# Clone the tree-sitter MCP server
 git clone https://github.com/mstuder-slalom/mcp-tree-sitter.git
-cd mcp-tree-sitter && pip install -e .
 ```
 
-Add to your Claude settings (`~/.claude/settings.json`):
+### Step 2: Install Claude Code Components
+
+```bash
+cd everything-claude-code
+
+# Create directories if they don't exist
+mkdir -p ~/.claude/rules
+mkdir -p ~/.claude/agents
+mkdir -p ~/.claude/commands
+mkdir -p ~/.claude/skills
+
+# Copy all components
+cp -r rules/* ~/.claude/rules/
+cp -r agents/* ~/.claude/agents/
+cp -r commands/* ~/.claude/commands/
+cp -r skills/* ~/.claude/skills/
+```
+
+### Step 3: Install the Tree-Sitter MCP Server
+
+```bash
+cd ../mcp-tree-sitter
+
+# Install the MCP server
+pip install -e .
+```
+
+### Step 4: Configure Claude Settings
+
+Add the MCP server to `~/.claude/settings.json`:
 
 ```json
 {
@@ -129,15 +143,32 @@ Add to your Claude settings (`~/.claude/settings.json`):
 }
 ```
 
-### 4. Start Using
+### Step 5: Restart Claude Code
+
+Close and reopen Claude Code to load the new components.
+
+### Step 6: Verify Installation
 
 ```bash
-# In any project, run the trophy workflow
+# Test that commands are available
 /trophy-workflow
 
-# Or individual commands
-/deps src/           # Analyze dependencies
-/trophy              # Run trophy tests
+# Test dependency analysis
+/deps src/
+```
+
+---
+
+## Quick Reference
+
+Once installed, use these commands in any project:
+
+```bash
+/trophy-workflow     # Full guided workflow (recommended for first time)
+/trophy              # Generate and run trophy tests
+/deps <path>         # Analyze code dependencies
+/go-trophy           # Go-specific trophy testing
+/plan                # Create implementation plan
 ```
 
 ---
