@@ -1,47 +1,48 @@
 ---
 name: python-testing
-description: Python testing strategies using pytest, TDD methodology, fixtures, mocking, parametrization, and coverage requirements.
+description: Python testing strategies using pytest, trophy testing methodology with integration-first approach, fixtures, minimal mocking, and spec-driven tests.
 ---
 
 # Python Testing Patterns
 
-Comprehensive testing strategies for Python applications using pytest, TDD methodology, and best practices.
+Comprehensive testing strategies for Python applications using pytest and trophy testing methodology.
 
 ## When to Activate
 
-- Writing new Python code (follow TDD: red, green, refactor)
-- Designing test suites for Python projects
+- Verifying Python implementations against specifications
+- Designing integration-focused test suites
 - Reviewing Python test coverage
 - Setting up testing infrastructure
 
 ## Core Testing Philosophy
 
-### Test-Driven Development (TDD)
+### Trophy Testing Methodology
 
-Always follow the TDD cycle:
+Focus on integration tests that verify real behavior:
 
-1. **RED**: Write a failing test for the desired behavior
-2. **GREEN**: Write minimal code to make the test pass
-3. **REFACTOR**: Improve code while keeping tests green
-
-```python
-# Step 1: Write failing test (RED)
-def test_add_numbers():
-    result = add(2, 3)
-    assert result == 5
-
-# Step 2: Write minimal implementation (GREEN)
-def add(a, b):
-    return a + b
-
-# Step 3: Refactor if needed (REFACTOR)
+```
+       /\
+      /E2E\      <- Small: Critical paths only
+     /------\
+    /INTEGR. \   <- LARGE: Primary focus!
+   /----------\
+  /   UNIT    \  <- Small: Complex pure functions only
+ /--------------\
+|    STATIC     | <- Free: mypy/pylint
+------------------
 ```
 
-### Coverage Requirements
+**Key Principles:**
+1. **Implementation first** - Write code from specs, then verify with tests
+2. **Integration tests primary** - Test real behavior with real databases
+3. **Minimal mocking** - Only mock external services you don't control
+4. **Spec-driven** - Tests verify WHEN/THEN scenarios from specs
 
-- **Target**: 80%+ code coverage
-- **Critical paths**: 100% coverage required
-- Use `pytest --cov` to measure coverage
+### Coverage Philosophy
+
+- Focus on **spec scenario coverage**, not line coverage
+- Integration tests often provide better coverage than unit tests
+- Use `pytest --cov` to identify untested code paths
 
 ```bash
 pytest --cov=mypackage --cov-report=term-missing --cov-report=html
@@ -637,25 +638,25 @@ class TestUserService:
 
 ### DO
 
-- **Follow TDD**: Write tests before code (red-green-refactor)
-- **Test one thing**: Each test should verify a single behavior
+- **Write integration tests first**: Test real behavior with real databases
+- **Test one scenario**: Each test should verify a WHEN/THEN scenario
 - **Use descriptive names**: `test_user_login_with_invalid_credentials_fails`
-- **Use fixtures**: Eliminate duplication with fixtures
-- **Mock external dependencies**: Don't depend on external services
+- **Use fixtures**: Eliminate duplication with fixtures for real resources
+- **Mock only external services**: Stripe, OpenAI, etc. - not your own code
 - **Test edge cases**: Empty inputs, None values, boundary conditions
-- **Aim for 80%+ coverage**: Focus on critical paths
+- **Focus on spec coverage**: Verify all WHEN/THEN scenarios pass
 - **Keep tests fast**: Use marks to separate slow tests
 
 ### DON'T
 
 - **Don't test implementation**: Test behavior, not internals
-- **Don't use complex conditionals in tests**: Keep tests simple
+- **Don't mock everything**: Use real databases and HTTP clients
 - **Don't ignore test failures**: All tests must pass
 - **Don't test third-party code**: Trust libraries to work
 - **Don't share state between tests**: Tests should be independent
 - **Don't catch exceptions in tests**: Use `pytest.raises`
-- **Don't use print statements**: Use assertions and pytest output
-- **Don't write tests that are too brittle**: Avoid over-specific mocks
+- **Don't duplicate coverage**: If integration covers it, skip unit test
+- **Don't chase line coverage**: Focus on spec scenario coverage
 
 ## Common Patterns
 

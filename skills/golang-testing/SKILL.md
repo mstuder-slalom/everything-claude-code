@@ -1,71 +1,62 @@
 ---
 name: golang-testing
-description: Go testing patterns including table-driven tests, subtests, benchmarks, fuzzing, and test coverage. Follows TDD methodology with idiomatic Go practices.
+description: Go testing patterns including table-driven tests, subtests, benchmarks, fuzzing, and test coverage. Uses trophy testing methodology with integration-first approach.
 ---
 
 # Go Testing Patterns
 
-Comprehensive Go testing patterns for writing reliable, maintainable tests following TDD methodology.
+Comprehensive Go testing patterns for writing reliable, maintainable tests following trophy testing methodology.
 
 ## When to Activate
 
-- Writing new Go functions or methods
-- Adding test coverage to existing code
+- Verifying Go implementations against specifications
+- Adding integration test coverage to existing code
 - Creating benchmarks for performance-critical code
 - Implementing fuzz tests for input validation
-- Following TDD workflow in Go projects
+- Testing real database operations and HTTP handlers
 
-## TDD Workflow for Go
+## Trophy Testing for Go
 
-### The RED-GREEN-REFACTOR Cycle
+### Integration-First Approach
 
 ```
-RED     → Write a failing test first
-GREEN   → Write minimal code to pass the test
-REFACTOR → Improve code while keeping tests green
-REPEAT  → Continue with next requirement
+       /\
+      /E2E\      <- Small: Critical paths only
+     /------\
+    /INTEGR. \   <- LARGE: Primary focus!
+   /----------\
+  /   UNIT    \  <- Small: Complex pure functions only
+ /--------------\
+|    STATIC     | <- Free: go vet/staticcheck
+------------------
 ```
 
-### Step-by-Step TDD in Go
+**Key Principles:**
+1. **Implementation first** - Write code from specs, then verify
+2. **Integration tests primary** - Use real databases and HTTP clients
+3. **Minimal mocking** - Only mock external services
+4. **Table-driven tests** - Comprehensive coverage with spec scenarios
+
+### Spec-Driven Testing
 
 ```go
-// Step 1: Define the interface/signature
-// calculator.go
-package calculator
+// Scenarios from: openspec/changes/users/specs/api/spec.md
+func TestUserAPI(t *testing.T) {
+    db := setupTestDB(t) // Real database
 
-func Add(a, b int) int {
-    panic("not implemented") // Placeholder
+    t.Run("WHEN valid user data THEN user created", func(t *testing.T) {
+        user, err := CreateUser(db, UserInput{Name: "Alice"})
+        if err != nil {
+            t.Fatalf("unexpected error: %v", err)
+        }
+
+        // Verify in real database
+        saved, _ := db.GetUser(user.ID)
+        if saved.Name != "Alice" {
+            t.Errorf("got %q; want Alice", saved.Name)
+        }
+    })
 }
-
-// Step 2: Write failing test (RED)
-// calculator_test.go
-package calculator
-
-import "testing"
-
-func TestAdd(t *testing.T) {
-    got := Add(2, 3)
-    want := 5
-    if got != want {
-        t.Errorf("Add(2, 3) = %d; want %d", got, want)
-    }
-}
-
-// Step 3: Run test - verify FAIL
-// $ go test
-// --- FAIL: TestAdd (0.00s)
-// panic: not implemented
-
-// Step 4: Implement minimal code (GREEN)
-func Add(a, b int) int {
-    return a + b
-}
-
-// Step 5: Run test - verify PASS
-// $ go test
-// PASS
-
-// Step 6: Refactor if needed, verify tests still pass
 ```
 
 ## Table-Driven Tests
@@ -680,20 +671,21 @@ go test -count=10 ./...
 ## Best Practices
 
 **DO:**
-- Write tests FIRST (TDD)
-- Use table-driven tests for comprehensive coverage
+- Write integration tests with real databases
+- Use table-driven tests for spec scenarios
 - Test behavior, not implementation
 - Use `t.Helper()` in helper functions
 - Use `t.Parallel()` for independent tests
 - Clean up resources with `t.Cleanup()`
-- Use meaningful test names that describe the scenario
+- Use meaningful test names linking to spec scenarios
 
 **DON'T:**
 - Test private functions directly (test through public API)
 - Use `time.Sleep()` in tests (use channels or conditions)
 - Ignore flaky tests (fix or remove them)
-- Mock everything (prefer integration tests when possible)
+- Mock internal code (only mock external services)
 - Skip error path testing
+- Chase line coverage (focus on spec scenarios)
 
 ## Integration with CI/CD
 

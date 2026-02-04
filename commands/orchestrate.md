@@ -11,25 +11,31 @@ Sequential agent workflow for complex tasks.
 ### feature
 Full feature implementation workflow:
 ```
-planner -> tdd-guide -> code-reviewer -> security-reviewer
+planner -> trophy-guide -> code-reviewer -> security-reviewer
 ```
 
 ### bugfix
 Bug investigation and fix workflow:
 ```
-explorer -> tdd-guide -> code-reviewer
+explorer -> trophy-guide -> code-reviewer
 ```
 
 ### refactor
 Safe refactoring workflow:
 ```
-architect -> code-reviewer -> tdd-guide
+architect -> code-reviewer -> trophy-guide
 ```
 
 ### security
 Security-focused review:
 ```
 security-reviewer -> code-reviewer -> architect
+```
+
+### verify
+Verification workflow with dependency analysis:
+```
+deps -> trophy-guide
 ```
 
 ## Execution Pattern
@@ -76,13 +82,13 @@ Executes:
    - Analyzes requirements
    - Creates implementation plan
    - Identifies dependencies
-   - Output: `HANDOFF: planner -> tdd-guide`
+   - Output: `HANDOFF: planner -> trophy-guide`
 
-2. **TDD Guide Agent**
-   - Reads planner handoff
-   - Writes tests first
-   - Implements to pass tests
-   - Output: `HANDOFF: tdd-guide -> code-reviewer`
+2. **Trophy Guide Agent**
+   - Reads planner handoff and OpenSpec artifacts
+   - Generates integration tests from WHEN/THEN scenarios
+   - Runs tests to verify implementation
+   - Output: `HANDOFF: trophy-guide -> code-reviewer`
 
 3. **Code Reviewer Agent**
    - Reviews implementation
@@ -103,7 +109,7 @@ ORCHESTRATION REPORT
 ====================
 Workflow: feature
 Task: Add user authentication
-Agents: planner -> tdd-guide -> code-reviewer -> security-reviewer
+Agents: planner -> trophy-guide -> code-reviewer -> security-reviewer
 
 SUMMARY
 -------
@@ -112,7 +118,7 @@ SUMMARY
 AGENT OUTPUTS
 -------------
 Planner: [summary]
-TDD Guide: [summary]
+Trophy Guide: [summary]
 Code Reviewer: [summary]
 Security Reviewer: [summary]
 
@@ -122,7 +128,7 @@ FILES CHANGED
 
 TEST RESULTS
 ------------
-[Test pass/fail summary]
+[Trophy test scenario pass/fail summary]
 
 SECURITY STATUS
 ---------------
@@ -155,12 +161,13 @@ $ARGUMENTS:
 - `bugfix <description>` - Bug fix workflow
 - `refactor <description>` - Refactoring workflow
 - `security <description>` - Security review workflow
+- `verify <description>` - Dependency analysis + trophy testing
 - `custom <agents> <description>` - Custom agent sequence
 
 ## Custom Workflow Example
 
 ```
-/orchestrate custom "architect,tdd-guide,code-reviewer" "Redesign caching layer"
+/orchestrate custom "architect,trophy-guide,code-reviewer" "Redesign caching layer"
 ```
 
 ## Tips
@@ -169,4 +176,4 @@ $ARGUMENTS:
 2. **Always include code-reviewer** before merge
 3. **Use security-reviewer** for auth/payment/PII
 4. **Keep handoffs concise** - focus on what next agent needs
-5. **Run verification** between agents if needed
+5. **Use /deps** before /trophy for dependency context

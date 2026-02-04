@@ -8,7 +8,7 @@ Located in `~/.claude/agents/`:
 |-------|---------|-------------|
 | planner | Implementation planning | Complex features, refactoring |
 | architect | System design | Architectural decisions |
-| tdd-guide | Test-driven development | New features, bug fixes |
+| trophy-guide | Trophy testing | Verify implementations, integration focus |
 | code-reviewer | Code review | After writing code |
 | security-reviewer | Security analysis | Before commits |
 | build-error-resolver | Fix build errors | When build fails |
@@ -21,7 +21,7 @@ Located in `~/.claude/agents/`:
 No user prompt needed:
 1. Complex feature requests - Use **planner** agent
 2. Code just written/modified - Use **code-reviewer** agent
-3. Bug fix or new feature - Use **tdd-guide** agent
+3. Implementation complete - Use **trophy-guide** agent
 4. Architectural decision - Use **architect** agent
 
 ## Parallel Task Execution
@@ -47,3 +47,10 @@ For complex problems, use split role sub-agents:
 - Security expert
 - Consistency reviewer
 - Redundancy checker
+
+## Trophy Testing Integration
+
+When verifying implementations:
+1. Use `/deps` to analyze dependencies
+2. Use `/trophy` to verify against OpenSpec
+3. Use tree-sitter MCP for code analysis

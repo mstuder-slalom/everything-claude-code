@@ -103,7 +103,8 @@ If you want changes, respond with:
 ## Integration with Other Commands
 
 After planning:
-- Use `/tdd` to implement with test-driven development
+- Implement the feature from the plan
+- Use `/trophy` to verify implementation with trophy testing
 - Use `/build-and-fix` if build errors occur
 - Use `/code-review` to review completed implementation
 
